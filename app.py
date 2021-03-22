@@ -1,4 +1,5 @@
-from flask import Flask,redirect, url_for,render_template
+from flask import Flask,redirect, url_for ,render_template,request
+import os
 import json
 import turtle
 import urllib.request
@@ -7,6 +8,10 @@ import webbrowser
 import geocoder
 
 app = Flask(__name__)
+picFolder = os.path.join('static','pics')
+app.config['UPLOAD_FOLDER'] = picFolder
+
+
 
 def iss():
   # Setup the world map in turtle module
@@ -44,11 +49,18 @@ def iss():
 
       # Refresh each 5 seconds
       time.sleep(5)
-@app.route('/')
-def hello_world():
-    # return render_template('index.html')
-    return iss()
 
+      
+@app.route('/')
+def home():
+  map = os.path.join(app.config['UPLOAD_FOLDER'],'worldmap.jpg')
+  return render_template('index.html', map_pic = map)
+    # return iss()
+ 
+@app.route('/send', methods=['GET','POST'])
+def send():
+  if request.method =='POST':
+    return iss()
 
 if __name__ == '__main__':
   app.run(debug=True)
